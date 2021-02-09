@@ -29,11 +29,6 @@ namespace Smartace.Core.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // LOCAL:
-            //optionsBuilder.UseSqlServer("Data Source=DESKTOP-LPDAJH0\\SQLEXPRESS;Initial Catalog=SmartaceHRDB;User Id=sa; Password=onoyimaobia;Trusted_Connection=true;Encrypt=false;MultipleActiveResultSets=true;Integrated Security=true;");
-
-            // QA:
-            //optionsBuilder.UseSqlServer("Data Source=104.40.215.33\\sqlexpress,1433;Initial Catalog=SmartaceHRDB;User Id=sa; Password=p@ssw0rd123;Encrypt=false;MultipleActiveResultSets=true;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

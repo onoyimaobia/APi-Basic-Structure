@@ -1,12 +1,16 @@
 
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Smartace.Application;
+using Smartace.Core.Data;
 using SmartaceApi.ModelHelper;
+using SmartaceApi.ModelHelper.BackGroundService;
 using System.Reflection;
 
 namespace SmartaceApi
@@ -27,7 +31,14 @@ namespace SmartaceApi
             services.ConfigureAuthentication(Configuration);
             services.AddControllers();
             services.AddTransient<ITokenGenerator, JWTTokenGenerator>();
-            //services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(AppBootstraper).Assembly);
+            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("SmartaceDb")));
+            services.AddHangfireServer();
+            services.AddControllers();
+            services.AddDbContext<SmartaceContext>(options =>
+                                                   options.UseSqlServer(Configuration.GetConnectionString("SmartaceDb"), b => b.MigrationsAssembly("Smartace.Core")));
+            
+
+
             AppBootstraper.InitServices(services);
 
 
@@ -58,6 +69,9 @@ namespace SmartaceApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions { 
+            Authorization = new[] {new HangfireDashboardAuthorizationFilter()}
             });
         }
     }
